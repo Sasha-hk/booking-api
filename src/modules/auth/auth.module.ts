@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DatabaseModule } from '../../shared/database/database.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { doctorProviders } from './doctor.providers';
 import { JwtStrategy } from './jwt-auth.strategy';
 import { JwtTokensService } from './jwt-tokens.service';
 import { LocalStrategy } from './local-auth.strategy';
@@ -20,6 +21,7 @@ import { userProviders } from './user.providers';
     LocalStrategy,
     ...userProviders,
     ...sessionProviders,
+    ...doctorProviders,
   ],
   imports: [DatabaseModule],
   exports: [
@@ -30,6 +32,7 @@ import { userProviders } from './user.providers';
     LocalStrategy,
     ...userProviders,
     ...sessionProviders,
+    ...doctorProviders,
   ],
 })
 export class AuthModule { }

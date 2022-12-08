@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 
 import { SetEnvVariable } from '../../shared/decorators/set-env-variable.decorator';
 import { RegisterDto } from './dto/auth.dto';
+import { Doctor } from './interfaces/doctor.interface';
 import { Session } from './interfaces/session.interface';
 import { User } from './interfaces/user.interface';
 import { JwtTokensService } from './jwt-tokens.service';
@@ -23,6 +24,8 @@ export class AuthService {
     private readonly userModel: Model<User>,
     @Inject('SESSION_MODEL')
     private readonly sessionModel: Model<Session>,
+    @Inject('DOCTOR_MODEL')
+    private readonly doctorModel: Model<Doctor>,
   ) { }
 
   async register(data: RegisterDto) {
@@ -38,9 +41,24 @@ export class AuthService {
 
     const hashedPassword = bcryptjs.hashSync(data.password, this.passwordSalt);
 
+    let doctor: Doctor;
+
+    if (data.type === 'doctor') {
+
+      if (!data.free || !data.specialization) {
+        throw new BadRequestException('Free and specialization is required to register doctor');
+      }
+
+      doctor = await this.doctorModel.create({
+        free: data.free,
+        specialization: data.specialization,
+      });
+    }
+
     await this.userModel.create({
       ...data,
       password: hashedPassword,
+      doctor,
     });
   }
 

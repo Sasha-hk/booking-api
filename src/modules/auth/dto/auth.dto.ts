@@ -1,4 +1,4 @@
-import { IsEnum, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 // eslint-disable-next-line max-len
 const emailPattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -23,6 +23,14 @@ export class RegisterDto {
   @IsString()
   @IsEnum(['user', 'doctor'])
   readonly type: 'user' | 'doctor';
+
+  @IsBoolean()
+  @IsOptional()
+  readonly free: boolean;
+
+  @IsString()
+  @IsOptional()
+  readonly specialization: string;
 }
 
 export class LogInDto {
