@@ -10,6 +10,13 @@ export class UserService {
     private readonly userModel: Model<User>,
   ) { }
 
+  async getMasterBySpecialization(specialization: string) {
+    return await this.userModel.find({
+      type: 'doctor',
+      specialization,
+    });
+  }
+
   async getExistsUser(id: string) {
     const candidate = await this.userModel.findById(id);
 

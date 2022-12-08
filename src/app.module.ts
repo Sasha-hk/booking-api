@@ -8,8 +8,8 @@ import { DatabaseModule } from './shared/database/database.module';
   imports: [
     AuthModule,
     AppointmentModule,
-    UserModule,
     DatabaseModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

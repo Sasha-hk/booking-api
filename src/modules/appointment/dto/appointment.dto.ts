@@ -1,7 +1,7 @@
-import { IsDateString, IsUUID } from 'class-validator';
+import { IsDateString, IsString } from 'class-validator';
 
 export class CreateAppointmentDto {
-  @IsUUID()
+  @IsString()
   readonly doctor: string;
 
   @IsDateString()

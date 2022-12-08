@@ -37,9 +37,9 @@ export class AppointmentService {
     data: CreateAppointmentDto,
   ) {
     // Check if user exists
-    await this.getExistsAppointment(id);
+    const userCandidate = await this.userService.getExistsUser(id);
 
-    // Get exists doc
+    // Get exists doctor
     const doctorCandidate = await this.userService.getExistsUser(data.doctor);
 
     if (doctorCandidate.type !== 'doctor') {
@@ -56,25 +56,35 @@ export class AppointmentService {
 
     const currentDate = new Date();
 
-    if (currentDate < new Date(data.date)) {
+    if (new Date(currentDate.toISOString()) > new Date(data.date)) {
       throw new BadRequestException('Impossible to create appointment in the past');
     }
+
+    return await this.appointmentModel.create({
+      date: data.date,
+      user: userCandidate,
+      doctor: doctorCandidate,
+    });
   }
 
   async getAppointments(id: string) {
-    const candidate = await this.userModel.findById(id);
+    const candidate = await this.userService.getExistsUser(id);
 
-    if (!candidate) {
-      throw new BadRequestException('User does\'t exists');
-    }
+    const currentDate = new Date();
 
     if (candidate.type === 'user') {
       return await this.appointmentModel.find({
-        user: candidate,
+        date: {
+          $gte: currentDate,
+        },
+        userId: candidate._id,
       });
     } else {
       return await this.appointmentModel.find({
-        doctor: candidate,
+        date: {
+          $gte: currentDate,
+        },
+        doctorId: candidate._id,
       });
     }
   }
@@ -93,12 +103,7 @@ export class AppointmentService {
       candidate,
     );
 
-    return await this.appointmentModel.findByIdAndUpdate(
-      appointmentId,
-      {
-        active: false,
-      },
-    );
+    return await this.appointmentModel.findByIdAndDelete(appointmentId);
   }
 
   async confirm(userId: string, appointmentId: string) {
