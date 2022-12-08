@@ -5,9 +5,9 @@ import { GetCookies } from '../../shared/decorators/get-cookies.decorator';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/auth.dto';
 import { ProtectedRequest } from './interfaces/protected-request.interface';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtTokensPair } from './jwt-tokens.service';
-import { LocalAuthGuard } from './local-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 
 function sendRefreshAndAccessTokens(

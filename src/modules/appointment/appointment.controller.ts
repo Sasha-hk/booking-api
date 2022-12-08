@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { ProtectedRequest } from '../auth/interfaces/protected-request.interface';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/appointment.dto';
 

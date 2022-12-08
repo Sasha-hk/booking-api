@@ -4,7 +4,7 @@ import { DatabaseModule } from '../../shared/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { AppointmentController } from './appointment.controller';
-import { appointmentProviders } from './appointment.providers';
+import { appointmentProviders } from './providers/appointment.providers';
 import { AppointmentService } from './appointment.service';
 
 @Module({

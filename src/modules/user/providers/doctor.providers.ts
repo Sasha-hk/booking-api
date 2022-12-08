@@ -1,6 +1,6 @@
 import { Connection } from 'mongoose';
 
-import { DoctorSchema } from '../../schemas/doctor.schema';
+import { DoctorSchema } from '../../../schemas/doctor.schema';
 
 export const doctorProviders = [
   {

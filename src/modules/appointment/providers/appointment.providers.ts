@@ -1,6 +1,6 @@
 import { Connection } from 'mongoose';
 
-import { AppointmentSchema } from '../../schemas/appointment.schema';
+import { AppointmentSchema } from '../../../schemas/appointment.schema';
 
 export const appointmentProviders = [
   {

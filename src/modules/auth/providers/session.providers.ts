@@ -1,6 +1,6 @@
 import { Connection } from 'mongoose';
 
-import { SessionSchema } from '../../schemas/session.schema';
+import { SessionSchema } from '../../../schemas/session.schema';
 
 export const sessionProviders = [
   {
