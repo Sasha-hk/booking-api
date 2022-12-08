@@ -2,14 +2,13 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { DatabaseModule } from '../../shared/database/database.module';
+import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { doctorProviders } from './doctor.providers';
 import { JwtStrategy } from './jwt-auth.strategy';
 import { JwtTokensService } from './jwt-tokens.service';
 import { LocalStrategy } from './local-auth.strategy';
 import { sessionProviders } from './session.providers';
-import { userProviders } from './user.providers';
 
 @Module({
   controllers: [AuthController],
@@ -19,20 +18,16 @@ import { userProviders } from './user.providers';
     JwtService,
     JwtStrategy,
     LocalStrategy,
-    ...userProviders,
     ...sessionProviders,
-    ...doctorProviders,
   ],
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UserModule],
   exports: [
     AuthService,
     JwtTokensService,
     JwtService,
     JwtStrategy,
     LocalStrategy,
-    ...userProviders,
     ...sessionProviders,
-    ...doctorProviders,
   ],
 })
 export class AuthModule { }

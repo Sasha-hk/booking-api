@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
 
-import { User } from '../../auth/interfaces/user.interface';
+import { User } from '../../user/interfaces/user.interface';
 
-export interface Session extends Document {
+export interface Appointment extends Document {
   readonly date: Date,
   readonly user: User,
   readonly doctor: User,
