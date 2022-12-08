@@ -8,22 +8,31 @@
   "scripts": {
     "prebuild": "yarn docker && rimraf dist",
     "build": "yarn docker && nest build",
-    "format": "yarn docker && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "yarn docker && nest start",
-    "start:dev": "yarn docker &&  nest start --watch",
-    "start:debug": "yarn docker &&  nest start --debug --watch",
-    "start:prod": "yarn docker &&  node dist/main",
+    "start": "yarn docker && dotenv -e ./.env -- nest start",
+    "start:dev": "yarn docker && dotenv -e ./.env -- nest start --watch",
+    "start:debug": "yarn docker && dotenv -e ./.env -- nest start --debug --watch",
+    "start:prod": "yarn docker && dotenv -e ./.env -- node dist/main",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx --fix .",
-    "test": "yarn docker && jest",
-    "test:e2e": "yarn docker && jest --config ./test/jest-e2e.json --coverage",
+    "test": "dotenv -e ./.env -- jest --config ./test/jest-e2e.json --coverage",
     "docker": "docker compose up -d"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/jwt": "^9.0.0",
     "@nestjs/mongoose": "^9.2.1",
+    "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv-cli": "^6.0.0",
     "mongoose": "^6.8.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
@@ -50,22 +59,5 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
     "typescript": "^4.7.4"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

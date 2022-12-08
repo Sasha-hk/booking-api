@@ -1,21 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import * as mongoose from 'mongoose';
 
-export type AppointmentDocument = HydratedDocument<Appointment>;
+import { DoctorSchema } from './doctor.schema';
+import { UserSchema } from './user.schema';
 
-@Schema()
-export class Appointment {
-  @Prop()
-    date: Date;
-
-  @Prop()
-    user: string;
-
-  @Prop()
-    doctor: string;
-
-  @Prop()
-    active: boolean;
-}
-
-export const AppointmentSchema = SchemaFactory.createForClass(Appointment);
+export const AppointmentSchema = new mongoose.Schema({
+  date: Date,
+  user: UserSchema,
+  doctor: DoctorSchema,
+  active: Boolean,
+});
