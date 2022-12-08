@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 
-import { GetCookies } from '../shared/decorators/get-cookies.decorator';
+import { GetCookies } from '../../shared/decorators/get-cookies.decorator';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/auth.dto';
 import { ProtectedRequest } from './interfaces/protected-request.interface';

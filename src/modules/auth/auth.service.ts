@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, UnauthorizedException } from '
 import * as bcryptjs from 'bcryptjs';
 import { Model } from 'mongoose';
 
-import { SetEnvVariable } from '../shared/decorators/set-env-variable.decorator';
+import { SetEnvVariable } from '../../shared/decorators/set-env-variable.decorator';
 import { RegisterDto } from './dto/auth.dto';
 import { Session } from './interfaces/session.interface';
 import { User } from './interfaces/user.interface';

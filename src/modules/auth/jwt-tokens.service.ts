@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { SetEnvVariable } from '../shared/decorators/set-env-variable.decorator';
+import { SetEnvVariable } from '../../shared/decorators/set-env-variable.decorator';
 
 /**
  * JWT token payload
