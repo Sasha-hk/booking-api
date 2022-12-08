@@ -19,26 +19,21 @@ export class AuthService {
 
   constructor(
     private readonly jwtTokensService: JwtTokensService,
-    @Inject('SESSION_MODEL')
+    @Inject('USER_MODEL')
     private readonly userModel: Model<User>,
     @Inject('SESSION_MODEL')
     private readonly sessionModel: Model<Session>,
   ) { }
 
   async register(data: RegisterDto) {
-    const emailOrUsernameExists = await this.userModel.findOne({
+    const emailExists = await this.userModel.findOne({
       $or: [
         { email: data.email },
-        { username: data.username },
       ],
     });
 
-    if (emailOrUsernameExists) {
-      if (emailOrUsernameExists.email == data.email) {
-        throw new BadRequestException('User with specified email already exists');
-      } else {
-        throw new BadRequestException('User with specified username already exists');
-      }
+    if (emailExists) {
+      throw new BadRequestException('User with specified email already exists');
     }
 
     const hashedPassword = bcryptjs.hashSync(data.password, this.passwordSalt);

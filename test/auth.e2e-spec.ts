@@ -2,12 +2,16 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as cookieParser from 'cookie-parser';
 import { Application } from 'express';
-import { AppModule } from '../src/app.module';
+import * as mongoose from 'mongoose';
 import * as request from 'supertest';
+
+import { AppModule } from '../src/app.module';
+import { SessionSchema } from '../src/schemas/session.schema';
+import { UserSchema } from '../src/schemas/user.schema';
 
 interface Credentials {
   email: string,
-  username: string,
+  name: string,
   type: 'user' | 'doctor',
   password: string,
 }
@@ -24,6 +28,8 @@ const registerUser = async (app: Application, credentials: Credentials) => {
 describe('AuthController (e2e)', () => {
   let app: Application;
   let application: INestApplication;
+  let User = mongoose.model('User', UserSchema);
+  let Session = mongoose.model('Session', SessionSchema);
 
   beforeAll(async () => {
     // Init express application
@@ -40,18 +46,31 @@ describe('AuthController (e2e)', () => {
       .init();
 
     app = application.getHttpServer();
+
+    await mongoose.connect(process.env.MONGODB_URL);
+
+    await User.deleteMany();
+    await Session.deleteMany();
+  });
+
+  afterAll(() => {
+    mongoose.connection.close();
   });
 
   describe('Register', () => {
     test('register user', async () => {
       const credentials = {
         email: 'some.mail@gmail.com',
-        username: 'john',
+        name: 'john',
         type: 'user',
         password: 'qwerty',
       } satisfies Credentials;
 
-      const data = await registerUser(app, credentials);
+      await registerUser(app, credentials);
+
+      const users = await User.find();
+
+      console.log(users);
     });
   });
 });

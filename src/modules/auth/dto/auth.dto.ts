@@ -13,7 +13,7 @@ export class RegisterDto {
   @IsString()
   @MinLength(4)
   @MaxLength(15)
-  readonly username: string;
+  readonly name: string;
 
   @IsString()
   @MinLength(4)
