@@ -8,4 +8,4 @@ export const AppointmentSchema = new mongoose.Schema({
   user: UserSchema,
   doctor: DoctorSchema,
   active: Boolean,
-});
+}, { timestamps: true });

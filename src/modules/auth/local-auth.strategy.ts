@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -9,11 +8,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly authService: AuthService,
   ) {
-    super();
+    super({ usernameField: 'email' });
   }
 
-  async validate(usernameOrEmail: string, password: string): Promise<any> {
-    const user = await this.authService.validateUser(usernameOrEmail, password);
+  async validate(email: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(email, password);
 
     if (typeof user === 'string') {
       if (user === 'Bad password') {

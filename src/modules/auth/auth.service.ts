@@ -44,13 +44,21 @@ export class AuthService {
     });
   }
 
-  async logIn(data: { id: string }) {
+  async logIn(id: string) {
     const tokens = await this.jwtTokensService.generatePairTokens(
-      { id: data.id },
+      { id: id },
     );
 
+    const user = await this.userModel.findOne({
+      id,
+    });
+
+    if (!user) {
+      throw new BadRequestException('Bad access token');
+    }
+
     await this.sessionModel.create({
-      userId: data.id,
+      user: user,
       refreshToken: tokens.refreshToken,
     });
 
@@ -59,7 +67,7 @@ export class AuthService {
 
   async logOut(id: string, refreshToken: string) {
     const candidate = await this.sessionModel.findOne({
-      user: id,
+      userId: id,
       refreshToken,
     });
 
@@ -71,10 +79,6 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    if (!refreshToken) {
-      throw new BadRequestException('No refresh token');
-    }
-
     let validToken: any;
 
     try {
@@ -84,7 +88,6 @@ export class AuthService {
     }
 
     const candidate = await this.sessionModel.findOne({
-      user: validToken.id,
       refreshToken,
     });
 
@@ -96,8 +99,8 @@ export class AuthService {
       { id: validToken.id },
     );
 
-    await this.sessionModel.findOneAndUpdate(
-      { _id: candidate.id }, { refreshToken: tokens.refreshToken },
+    await this.sessionModel.findByIdAndUpdate(
+      candidate.id, { refreshToken: tokens.refreshToken },
     );
 
     return tokens;
@@ -105,7 +108,7 @@ export class AuthService {
 
   async validateUser(email: string, inputPassword: string) {
     const candidate = await this.userModel.findOne({
-      email: email,
+      email,
     });
 
     if (!candidate) {

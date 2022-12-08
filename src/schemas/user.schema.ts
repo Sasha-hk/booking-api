@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 
 import { DoctorSchema } from './doctor.schema';
+import { SessionSchema } from './session.schema';
 
 export const UserSchema = new mongoose.Schema({
   email: String,
@@ -8,9 +9,9 @@ export const UserSchema = new mongoose.Schema({
   phone: String,
   password: String,
   name: String,
-  type: ['user', 'doctor'],
+  type: String,
   doctor: {
     require: false,
     type: DoctorSchema,
   },
-});
+}, { timestamps: true });

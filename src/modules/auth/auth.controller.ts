@@ -5,6 +5,7 @@ import { GetCookies } from '../shared/decorators/get-cookies.decorator';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/auth.dto';
 import { ProtectedRequest } from './interfaces/protected-request.interface';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtTokensPair } from './jwt-tokens.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -51,12 +52,12 @@ export class AuthController {
     @Req() req: ProtectedRequest,
     @Res() res: Response,
   ) {
-    const tokens = await this.authService.logIn(req.user);
+    const tokens = await this.authService.logIn(req.user.id);
 
     sendRefreshAndAccessTokens(res, tokens);
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('log-out')
   async logOut(
     @Req() req: ProtectedRequest,
