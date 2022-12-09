@@ -9,11 +9,11 @@
     "prebuild": "yarn docker && rimraf dist",
     "build": "yarn docker && nest build",
     "start": "yarn docker && cross-env NODE_ENV=\"prod\" dotenv -e ./.env -- nest start",
-    "start:dev": "yarn docker && dotenv -e ./.env -- nest start --watch",
+    "dev": "yarn docker && dotenv -e ./.env -- nest start --watch",
     "start:debug": "yarn docker && dotenv -e ./.env -- nest start --debug --watch",
     "start:prod": "yarn docker && dotenv -e ./.env -- node dist/main",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx --fix .",
-    "test": "dotenv -e ./.env -- jest --config ./jest.config.ts --coverage --forceExit",
+    "test": "yarn docker && dotenv -e ./.env -- jest --config ./jest.config.ts --coverage --forceExit",
     "docker": "docker compose up -d"
   },
   "dependencies": {
