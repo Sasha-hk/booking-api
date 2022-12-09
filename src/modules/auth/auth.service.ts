@@ -3,12 +3,12 @@ import * as bcryptjs from 'bcryptjs';
 import { Model } from 'mongoose';
 
 import { SetEnvVariable } from '../../shared/decorators/set-env-variable.decorator';
-import { RegisterDto } from './dto/auth.dto';
 import { Doctor } from '../user/interfaces/doctor.interface';
-import { Session } from './interfaces/session.interface';
 import { User } from '../user/interfaces/user.interface';
-import { JwtTokensService } from './jwt-tokens.service';
 import { UserService } from '../user/user.service';
+import { RegisterDto } from './dto/auth.dto';
+import { Session } from './interfaces/session.interface';
+import { JwtTokensService } from './jwt-tokens.service';
 
 
 @Injectable()

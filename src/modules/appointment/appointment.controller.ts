@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ProtectedRequest } from '../auth/interfaces/protected-request.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ProtectedRequest } from '../auth/interfaces/protected-request.interface';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/appointment.dto';
 
@@ -9,7 +9,7 @@ import { CreateAppointmentDto } from './dto/appointment.dto';
 export class AppointmentController {
   constructor(
     private readonly appointmentService: AppointmentService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Post('')

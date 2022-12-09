@@ -19,4 +19,4 @@ import { UserService } from './user.service';
     ...doctorProviders,
   ],
 })
-export class UserModule {}
+export class UserModule { }

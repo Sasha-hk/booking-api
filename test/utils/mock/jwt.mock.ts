@@ -26,7 +26,7 @@ export class JwtMock {
   /**
    * Constructor
    */
-  constructor() {}
+  constructor() { }
 
   /**
    * Generate access token

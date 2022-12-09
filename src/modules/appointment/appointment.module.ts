@@ -4,8 +4,8 @@ import { DatabaseModule } from '../../shared/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { AppointmentController } from './appointment.controller';
-import { appointmentProviders } from './providers/appointment.providers';
 import { AppointmentService } from './appointment.service';
+import { appointmentProviders } from './providers/appointment.providers';
 
 @Module({
   controllers: [AppointmentController],
@@ -19,4 +19,4 @@ import { AppointmentService } from './appointment.service';
     ...appointmentProviders,
   ],
 })
-export class AppointmentModule {}
+export class AppointmentModule { }

@@ -6,7 +6,6 @@ import * as mongoose from 'mongoose';
 import * as request from 'supertest';
 
 import { AppModule } from '../../src/app.module';
-import { JwtTokensService } from '../../src/modules/auth/jwt-tokens.service';
 import { AppointmentSchema } from '../../src/schemas/appointment.schema';
 import { DoctorSchema } from '../../src/schemas/doctor.schema';
 import { SessionSchema } from '../../src/schemas/session.schema';
