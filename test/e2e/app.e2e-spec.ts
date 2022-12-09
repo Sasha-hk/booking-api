@@ -4,6 +4,9 @@ import * as cookieParser from 'cookie-parser';
 import { Application } from 'express';
 import * as mongoose from 'mongoose';
 import * as request from 'supertest';
+import * as fs from 'fs/promises';
+import { existsSync } from 'fs';
+import * as path from 'path';
 
 import { AppModule } from '../../src/app.module';
 import { AppointmentSchema } from '../../src/schemas/appointment.schema';
@@ -12,7 +15,7 @@ import { SessionSchema } from '../../src/schemas/session.schema';
 import { UserSchema } from '../../src/schemas/user.schema';
 import getCookies from '../utils/get-cookies';
 import { JwtMock } from '../utils/mock/jwt.mock';
-import { sleep } from '../utils/sleep';
+import { sleep } from '../../src/utils/sleep';
 
 interface Credentials {
   email: string
@@ -597,8 +600,46 @@ describe('AuthController (e2e)', () => {
         method: 'get',
         url: '/appointment',
       });
-
-      console.log(r.body);
     });
+  });
+
+  test('notifications test', async () => {
+    const doctors = await User.find({ type: 'doctor' });
+
+    let credentials: Credentials = {
+      email: '123.new@main.me',
+      name: 'igor',
+      type: 'user',
+      password: 'qwerty',
+    };
+
+    credentials = await registerUser(app, credentials);
+
+    const notificationsFile = path.join(process.cwd(), 'notifications.log');
+
+    if (existsSync(notificationsFile)) {
+      await fs.unlink(notificationsFile);
+    }
+
+    const oneMinuteBefore = new Date();
+    oneMinuteBefore.setMinutes(oneMinuteBefore.getMinutes() + 1);
+    oneMinuteBefore.setSeconds(oneMinuteBefore.getSeconds() + 2);
+
+    await authRequest({
+      app,
+      credentials,
+      method: 'post',
+      url: '/appointment',
+      data: {
+        date: oneMinuteBefore,
+        doctor: doctors[0].id,
+      },
+    });
+
+    await sleep(4000);
+
+    const notifications = await fs.readFile(notificationsFile);
+
+    expect(notifications.toString()).toBeDefined();
   });
 });

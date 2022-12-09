@@ -1,10 +1,16 @@
+/* eslint-disable max-len */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
+import * as schedule from 'node-schedule';
+import * as path from 'path';
+import * as fs from 'fs/promises';
 
 import { User } from '../user/interfaces/user.interface';
 import { UserService } from '../user/user.service';
 import { CreateAppointmentDto } from './dto/appointment.dto';
 import { Appointment } from './interfaces/appointment.interface';
+
+const notificationsFile = path.join(process.cwd(), 'notifications.log');
 
 @Injectable()
 export class AppointmentService {
@@ -58,6 +64,31 @@ export class AppointmentService {
 
     if (new Date(currentDate.toISOString()) > new Date(data.date)) {
       throw new BadRequestException('Impossible to create appointment in the past');
+    }
+
+    /* istanbul ignore else */
+    if (process.env.NODE_ENV !== 'prod') {
+      // Message one minute before the appointment
+      const scheduleOneMinuteBefore = new Date(data.date);
+      scheduleOneMinuteBefore.setMinutes(scheduleOneMinuteBefore.getMinutes() - 1);
+      schedule.scheduleJob(scheduleOneMinuteBefore, () => {
+        // @ts-ignore
+        fs.appendFile(notificationsFile, `${new Date().toISOString()} | Привет ${userCandidate.name}! Напоминаем что вы записаны к ${doctorCandidate.doctor.specialization} завтра в ${new Date(data.date).toTimeString()}! \n`);
+      });
+    } else {
+      const scheduleOneDayBefore = new Date(data.date);
+      scheduleOneDayBefore.setDate(scheduleOneDayBefore.getDate() - 1);
+      schedule.scheduleJob(scheduleOneDayBefore, () => {
+        // @ts-ignore
+        fs.appendFile(notificationsFile, `${new Date().toISOString()} | Привет ${userCandidate.name}! Напоминаем что вы записаны к ${doctorCandidate.doctor.specialization} завтра в ${data.date}! \n`);
+      });
+
+      const scheduleOneHourBefore = new Date(data.date);
+      scheduleOneHourBefore.setHours(scheduleOneHourBefore.getHours() - 1);
+      schedule.scheduleJob(scheduleOneHourBefore, () => {
+        // @ts-ignore
+        fs.appendFile(notificationsFile, `${new Date().toISOString()} | Привет ${userCandidate.name}! Вам через 2 часа к ${doctorCandidate.doctor.specialization} в ${data.date}! \n`);
+      });
     }
 
     return await this.appointmentModel.create({
