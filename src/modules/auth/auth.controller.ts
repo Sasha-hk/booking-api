@@ -9,7 +9,6 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { ProtectedRequest } from './interfaces/protected-request.interface';
 import { JwtTokensPair } from './jwt-tokens.service';
 
-
 function sendRefreshAndAccessTokens(
   res: Response,
   { refreshToken, accessToken }: JwtTokensPair,

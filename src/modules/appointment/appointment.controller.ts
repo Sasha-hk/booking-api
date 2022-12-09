@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProtectedRequest } from '../auth/interfaces/protected-request.interface';
 import { AppointmentService } from './appointment.service';
@@ -15,7 +15,6 @@ export class AppointmentController {
   @Post('')
   async createAppointment(
     @Req() req: ProtectedRequest,
-    @Res() res: Response,
     @Body() body: CreateAppointmentDto,
   ) {
     const newAppointment = await this.appointmentService.createAppointment(
@@ -23,7 +22,7 @@ export class AppointmentController {
       body,
     );
 
-    res.status(HttpStatus.CREATED).json(newAppointment);
+    return newAppointment;
   }
 
   @UseGuards(JwtAuthGuard)
