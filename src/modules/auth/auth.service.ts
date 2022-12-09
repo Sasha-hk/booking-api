@@ -8,6 +8,7 @@ import { Doctor } from '../user/interfaces/doctor.interface';
 import { Session } from './interfaces/session.interface';
 import { User } from '../user/interfaces/user.interface';
 import { JwtTokensService } from './jwt-tokens.service';
+import { UserService } from '../user/user.service';
 
 
 @Injectable()
@@ -19,6 +20,7 @@ export class AuthService {
   private readonly passwordSalt: string;
 
   constructor(
+    private readonly userService: UserService,
     private readonly jwtTokensService: JwtTokensService,
     @Inject('USER_MODEL')
     private readonly userModel: Model<User>,
@@ -44,7 +46,6 @@ export class AuthService {
     let doctor: Doctor;
 
     if (data.type === 'doctor') {
-
       if (!data.free || !data.specialization) {
         throw new BadRequestException('Free and specialization is required to register doctor');
       }
@@ -67,13 +68,7 @@ export class AuthService {
       { id: id },
     );
 
-    const user = await this.userModel.findOne({
-      id,
-    });
-
-    if (!user) {
-      throw new BadRequestException('Bad access token');
-    }
+    const user = await this.userService.getExistsUser(id);
 
     await this.sessionModel.create({
       user: user,

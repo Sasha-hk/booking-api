@@ -5,6 +5,7 @@ const config: Config = {
   testMatch: ['**/?(*.)+(spec|test|e2e-spec).[jt]s?(x)'],
   preset: 'ts-jest',
   roots: ['./test'],
+  collectCoverageFrom: ['<rootDir>/src/**'],
   testTimeout: 30000,
 };
 

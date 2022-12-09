@@ -6,11 +6,13 @@ import * as mongoose from 'mongoose';
 import * as request from 'supertest';
 
 import { AppModule } from '../../src/app.module';
+import { JwtTokensService } from '../../src/modules/auth/jwt-tokens.service';
 import { AppointmentSchema } from '../../src/schemas/appointment.schema';
 import { DoctorSchema } from '../../src/schemas/doctor.schema';
 import { SessionSchema } from '../../src/schemas/session.schema';
 import { UserSchema } from '../../src/schemas/user.schema';
 import getCookies from '../utils/get-cookies';
+import { JwtMock } from '../utils/mock/jwt.mock';
 import { sleep } from '../utils/sleep';
 
 interface Credentials {
@@ -74,6 +76,7 @@ describe('AuthController (e2e)', () => {
   let Session = mongoose.model('Session', SessionSchema);
   let Doctor = mongoose.model('Doctor', DoctorSchema);
   let Appointment = mongoose.model('Appointment', AppointmentSchema);
+  let jwtMock = new JwtMock();
 
   beforeAll(async () => {
     // Init express application
@@ -186,19 +189,17 @@ describe('AuthController (e2e)', () => {
 
       expect(sessions).toHaveLength(0);
     });
-  });
-
-  describe('Register doctor', () => {
-    let credentials: Credentials = {
-      email: '12348@some.com',
-      name: 'john',
-      password: '123123123',
-      type: 'doctor',
-      free: true,
-      specialization: 'therapist',
-    };
 
     test('register', async () => {
+      let credentials: Credentials = {
+        email: '12348@some.com',
+        name: 'john',
+        password: '123123123',
+        type: 'doctor',
+        free: true,
+        specialization: 'therapist',
+      };
+
       credentials = await registerUser(app, credentials);
 
       const doctors = await Doctor.find();
@@ -212,6 +213,72 @@ describe('AuthController (e2e)', () => {
       expect(doctor.doctor).toBeTruthy();
       expect(doctor.doctor.free).toBe(credentials.free);
       expect(doctor.doctor.specialization).toBe(credentials.specialization);
+    });
+
+    describe('other cases', () => {
+      test('with exists email', async () => {
+        const { body } = await request(app)
+          .post('/auth/register')
+          .send(credentials)
+          .expect(400);
+
+        expect(body.message).toBe('User with specified email already exists');
+      });
+
+      test('register doctor without free and specialization fields', async () => {
+        const { body } = await request(app)
+          .post('/auth/register')
+          .send({
+            ...credentials,
+            type: 'doctor',
+            email: '12390213@i.com',
+          })
+          .expect(400);
+
+        expect(body.message).toBe('Free and specialization is required to register doctor');
+      });
+
+      test('login with not exists email', async () => {
+        const { body } = await request(app)
+          .post('/auth/log-in')
+          .send({
+            ...credentials,
+            email: 'mail@mail.com',
+          })
+          .expect(400);
+
+        expect(body.message).toBe('User not exists');
+      });
+
+      test('login with bad password', async () => {
+        const { body } = await request(app)
+          .post('/auth/log-in')
+          .send({
+            ...credentials,
+            password: '1238',
+          })
+          .expect(400);
+
+        expect(body.message).toBe('Bad password');
+      });
+
+      test('try to refresh with bad token', async () => {
+        const r = await request(app)
+          .get('/auth/refresh')
+          .set('Cookie', ['refreshToken=token.token.token'])
+          .expect(401);
+
+        expect(r.body.message).toBe('Bad refresh token');
+      });
+
+      test('try to refresh with not exists in database refresh token', async () => {
+        const r = await request(app)
+          .get('/auth/refresh')
+          .set('Cookie', ['refreshToken=' + await jwtMock.generateRefreshToken({ id: 'id' })])
+          .expect(400);
+
+        expect(r.body.message).toBe('Refresh token not exists');
+      });
     });
   });
 
@@ -348,8 +415,6 @@ describe('AuthController (e2e)', () => {
         method: 'get',
         url: '/appointment',
       });
-
-      console.log(r.body);
     });
 
     test('get user appointments', async () => {
@@ -521,6 +586,20 @@ describe('AuthController (e2e)', () => {
       });
       expect(r.body.message).toBe('Appointment doesn\'t exists');
       expect(r.status).toBe(400);
+    });
+
+    test('try access protected route with bad token', async () => {
+      const r = await authRequest({
+        app,
+        credentials: {
+          ...userCredentials,
+          accessToken: 'asdf',
+        },
+        method: 'get',
+        url: '/appointment',
+      });
+
+      console.log(r.body);
     });
   });
 });
